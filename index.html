@@ -517,9 +517,14 @@ input:checked + .slider:before {
                     <p>Paid Users</p>
                 </div>
                 <div class="stat-card">
-                    <h3 id="dGuestCount">0</h3>
-                    <p>Total Guest</p>
-                </div>
+    <h3 id="dGuestCount">0</h3>
+    <p>Total Guest</p>
+    
+    <!-- নতুন লাইন: Spouse কাউন্ট দেখানোর জন্য -->
+    <div style="font-size: 11px; color: #e74c3c; font-weight: 700; margin-top: -2px;">
+        (Spouse: <span id="dSpouseCount">0</span>)
+    </div>
+</div>
             </div>
 
             <div class="stats-full">
@@ -1164,16 +1169,29 @@ input:checked + .slider:before {
                 let totalMoney = 0;
                 let paidUsers = 0;
                 let totalGuests = 0;
-                
+                let totalSpouse = 0; // নতুন ভেরিয়েবল
+
+                // লুপ ঠিক করা হলো এবং Spouse লজিক বসানো হলো
                 allData.forEach(d => {
                     if(d.payment_status === "Approved") {
                         totalMoney += (parseInt(d.total_amount) || 0);
                         paidUsers++;
                         totalGuests += getGuestCount(d);
+
+                        // Spouse কাউন্ট করার শর্ত
+                        if (d.guest_info && d.guest_info.spouse && d.guest_info.spouse !== "No") {
+                            totalSpouse++;
+                        }
                     }
                 });
 
                 updateStats(paidUsers, totalMoney, totalGuests);
+
+                // ডিসপ্লেতে Spouse সংখ্যা আপডেট করা
+                if(document.getElementById('dSpouseCount')) {
+                    document.getElementById('dSpouseCount').innerText = totalSpouse;
+                }
+
                 reRenderAllTables();
                 
                 if(btnIcon) btnIcon.className = "fas fa-sync-alt";
